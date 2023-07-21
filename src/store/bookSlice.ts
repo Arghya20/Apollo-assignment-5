@@ -1,36 +1,33 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
+import { bookApi } from './bookApi';
 
-// Replace 'YOUR_API_URL' with the actual URL of your backend API
-const API_URL = "YOUR_API_URL";
-
-export const fetchBooks = createAsyncThunk("books/fetchBooks", async () => {
-  const response = await fetch(`${API_URL}/books`);
-  const data = await response.json();
-  return data;
-});
-
-const bookSlice = createSlice({
-  name: "books",
+export const bookSlice = createSlice({
+  name: 'books',
   initialState: {
     list: [],
-    status: "idle",
-    error: null,
   },
   reducers: {},
   extraReducers: (builder) => {
-    builder
-      .addCase(fetchBooks.pending, (state) => {
-        state.status = "loading";
-      })
-      .addCase(fetchBooks.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        state.list = action.payload;
-      })
-      .addCase(fetchBooks.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.error.message;
-      });
+    builder.addCase(bookApi.endpoints.fetchBooks.fulfilled, (state, action) => {
+      state.list = action.payload;
+    });
+    builder.addCase(bookApi.endpoints.addNewBook.fulfilled, (state, action) => {
+      state.list.push(action.payload);
+    });
+    builder.addCase(bookApi.endpoints.updateBook.fulfilled, (state, action) => {
+      const { id, ...updatedBook } = action.payload;
+      const index = state.list.findIndex((book) => book.id === id);
+      if (index !== -1) {
+        state.list[index] = { id, ...updatedBook };
+      }
+    });
+    builder.addCase(bookApi.endpoints.deleteBook.fulfilled, (state, action) => {
+      const bookId = action.meta.arg;
+      state.list = state.list.filter((book) => book.id !== bookId);
+    });
   },
 });
+
+export const selectAllBooks = (state) => state.books.list;
 
 export default bookSlice.reducer;

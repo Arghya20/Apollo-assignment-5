@@ -12,6 +12,8 @@ import AllBooksPage from "./pages/AllBooksPage";
 import BookDetailsPage from "./pages/BookDetailsPage";
 import LoginPage from "./pages/LoginPage";
 import RegistrationPage from "./pages/RegistrationPage";
+import AddNewBookPage from "./pages/AddNewBookPage";
+import EditBookPage from "./pages/EditBookPage";
 import Header from "./components/Header";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -33,6 +35,8 @@ const App = () => {
         </Route>
         <ProtectedRoute path="/books" exact component={AllBooksPage} />
         <ProtectedRoute path="/books/:bookId" component={BookDetailsPage} />
+        <ProtectedRoute path="/add-new-book" component={AddNewBookPage} />
+        <ProtectedRoute path="/edit-book/:bookId" component={EditBookPage} />
         <Route path="*">
           <Redirect to="/" />
         </Route>
