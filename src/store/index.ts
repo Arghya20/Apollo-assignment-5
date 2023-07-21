@@ -3,9 +3,11 @@ import { setupListeners } from "@reduxjs/toolkit-query/react";
 import { combineReducers } from "redux";
 import { bookApi } from "./bookApi";
 import bookReducer from "./bookSlice";
+import authReducer from "./authSlice";
 
 const rootReducer = combineReducers({
   books: bookReducer,
+  auth: authReducer,
   [bookApi.reducerPath]: bookApi.reducer,
 });
 

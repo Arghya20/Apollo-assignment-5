@@ -1,6 +1,23 @@
+import React from "react";
 import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { logout } from "../store/authSlice";
 
-const Header = ({ isLoggedIn, onLogout }) => {
+const Header = ({ isLoggedIn }) => {
+  const dispatch = useDispatch();
+
+  const handleLogout = () => {
+    firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        dispatch(logout());
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
   return (
     <header>
       <nav>
@@ -19,7 +36,7 @@ const Header = ({ isLoggedIn, onLogout }) => {
             </>
           ) : (
             <li>
-              <button onClick={onLogout}>Logout</button>
+              <button onClick={handleLogout}>Logout</button>
             </li>
           )}
         </ul>
