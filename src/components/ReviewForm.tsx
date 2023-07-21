@@ -15,7 +15,7 @@ const ReviewForm = ({ onSubmitReview }) => {
         placeholder="Write your review here..."
         value={reviewText}
         onChange={(e) => setReviewText(e.target.value)}
-      />
+      ></textarea>
       <button type="submit">Submit Review</button>
     </form>
   );

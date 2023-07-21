@@ -1,74 +1,79 @@
 import { useState } from "react";
 import { useParams, useHistory } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { updateBook } from "../store/bookSlice";
+import { useSelector } from "react-redux";
 
 const EditBookPage = () => {
-  const dispatch = useDispatch();
-  const history = useHistory();
   const { bookId } = useParams();
+  const history = useHistory();
+  const allBooks = useSelector((state) => state.books.list);
 
-  const bookToEdit = useSelector((state) =>
-    state.books.list.find((book) => book.id === parseInt(bookId))
-  );
+  const selectedBook = allBooks.find((book) => book.id === parseInt(bookId));
 
-  const [editedBookData, setEditedBookData] = useState(bookToEdit);
+  if (!selectedBook) {
+    return <div>Book not found</div>;
+  }
+
+  const [editedBook, setEditedBook] = useState(selectedBook);
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    dispatch(updateBook(editedBookData));
+
+    const updatedBooks = allBooks.map((book) => {
+      if (book.id === parseInt(bookId)) {
+        return editedBook;
+      }
+      return book;
+    });
+
+    dispatch(updateAllBooks(updatedBooks));
+
+    history.push(`/books/${bookId}`);
+  };
+
+  const handleCancelEdit = () => {
     history.push(`/books/${bookId}`);
   };
 
   return (
     <div>
-      <h1>Edit Book</h1>
+      <h2>Edit Book</h2>
       <form onSubmit={handleFormSubmit}>
         <input
           type="text"
           placeholder="Title"
-          value={editedBookData.title}
+          value={editedBook.title}
           onChange={(e) =>
-            setEditedBookData((prevData) => ({
-              ...prevData,
-              title: e.target.value,
-            }))
+            setEditedBook({ ...editedBook, title: e.target.value })
           }
         />
         <input
           type="text"
           placeholder="Author"
-          value={editedBookData.author}
+          value={editedBook.author}
           onChange={(e) =>
-            setEditedBookData((prevData) => ({
-              ...prevData,
-              author: e.target.value,
-            }))
+            setEditedBook({ ...editedBook, author: e.target.value })
           }
         />
         <input
           type="text"
           placeholder="Genre"
-          value={editedBookData.genre}
+          value={editedBook.genre}
           onChange={(e) =>
-            setEditedBookData((prevData) => ({
-              ...prevData,
-              genre: e.target.value,
-            }))
+            setEditedBook({ ...editedBook, genre: e.target.value })
           }
         />
         <input
           type="date"
           placeholder="Publication Date"
-          value={editedBookData.publicationDate}
+          value={editedBook.publicationDate}
           onChange={(e) =>
-            setEditedBookData((prevData) => ({
-              ...prevData,
-              publicationDate: e.target.value,
-            }))
+            setEditedBook({ ...editedBook, publicationDate: e.target.value })
           }
         />
         <button type="submit">Save Changes</button>
+        <button type="button" onClick={handleCancelEdit}>
+          Cancel
+        </button>
       </form>
     </div>
   );

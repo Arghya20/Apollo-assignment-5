@@ -1,39 +1,44 @@
+import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { login } from "../store/authSlice";
+import { useHistory } from "react-router-dom";
+import { login } from "../store/authThunks";
 
 const LoginPage = () => {
   const dispatch = useDispatch();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const history = useHistory();
 
-  const handleLogin = (e) => {
+  const [formData, setFormData] = useState({ email: "", password: "" });
+
+  const handleFormSubmit = (e) => {
     e.preventDefault();
 
-    firebase
-      .auth()
-      .signInWithEmailAndPassword(email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        dispatch(login(user));
-      })
-      .catch((error) => {});
+    dispatch(login(formData.email, formData.password)).then(() => {
+      history.push("/books");
+    });
   };
 
   return (
     <div>
       <h1>Login</h1>
-      <form onSubmit={handleLogin}>
+      <form onSubmit={handleFormSubmit}>
         <input
           type="email"
           placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          value={formData.email}
+          onChange={(e) =>
+            setFormData((prevData) => ({ ...prevData, email: e.target.value }))
+          }
         />
         <input
           type="password"
           placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          value={formData.password}
+          onChange={(e) =>
+            setFormData((prevData) => ({
+              ...prevData,
+              password: e.target.value,
+            }))
+          }
         />
         <button type="submit">Login</button>
       </form>

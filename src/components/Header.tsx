@@ -1,21 +1,12 @@
-import React from "react";
-import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { logout } from "../store/authSlice";
+import { Link } from "react-router-dom";
+import { logout } from "../store/authThunks";
 
 const Header = ({ isLoggedIn }) => {
   const dispatch = useDispatch();
 
   const handleLogout = () => {
-    firebase
-      .auth()
-      .signOut()
-      .then(() => {
-        dispatch(logout());
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    dispatch(logout());
   };
 
   return (
@@ -23,9 +14,18 @@ const Header = ({ isLoggedIn }) => {
       <nav>
         <ul>
           <li>
-            <Link to="/">All Books</Link>
+            <Link to="/">Home</Link>
           </li>
-          {!isLoggedIn ? (
+          {isLoggedIn ? (
+            <>
+              <li>
+                <Link to="/books">All Books</Link>
+              </li>
+              <li>
+                <button onClick={handleLogout}>Logout</button>
+              </li>
+            </>
+          ) : (
             <>
               <li>
                 <Link to="/signin">Sign In</Link>
@@ -34,10 +34,6 @@ const Header = ({ isLoggedIn }) => {
                 <Link to="/signup">Sign Up</Link>
               </li>
             </>
-          ) : (
-            <li>
-              <button onClick={handleLogout}>Logout</button>
-            </li>
           )}
         </ul>
       </nav>
